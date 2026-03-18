@@ -1,0 +1,14 @@
+from sentence_transformers import SentenceTransformer
+
+model = SentenceTransformer("all-MiniLM-L6-v2")
+
+sentences=[
+        "第一段测试embedding向量的转换",
+        "第二段测试embedding向量的转换",
+        "第三段测试embedding向量的转换"
+        ]
+
+embeddings = model.encode(sentences)
+
+for i,emb in enumerate(embeddings):
+    print(f"句子{i}向量长度:",len(emb))
