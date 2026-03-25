@@ -4,13 +4,11 @@ import numpy as np
 
 #build data
 sentences=[
-        "ssssssssss",
-        "wwwwwwwwww",
-        "swswswswsw",
-        "wswswswsws",
-        "sssssswwww"
+        "sssssssssssssssssss",
+        "swswssswswwgwfwfwfw",
+        "wefwefwefwefwefwefwe"
         ]
-query="ssssssssss"
+query=input("please type your word i will find a smilar word like you type it for u :  ")
 
 #get objet from sentencetramsformer
 sentencetransformer = SentenceTransformer("all-MiniLM-L6-v2")
@@ -25,7 +23,7 @@ index = faiss.IndexFlatL2(384)
 index.add(embeddings)
 
 #get to which is similar 
-k=2
+k=1
 distance,indices=index.search(query_vector,k)
 
 #get result 
