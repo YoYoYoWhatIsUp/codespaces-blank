@@ -3,13 +3,9 @@ from sentence_transformers import SentenceTransformer
 import numpy as np
 import faiss
 
-#build the data 
-sentences=[
-    "basketball is a good game",
-    "how to play ping-pong",
-    "mango fruit is good",
-    "how to get bigger muscle"
-        ]
+#read the file  
+with open("test.txt","r",encoding="utf-8") as f:
+    sentences=[line.strip() for line in  f.readlines()  if line.strip()]
 query=input("please input your query : ")
 
 #embedding the data
