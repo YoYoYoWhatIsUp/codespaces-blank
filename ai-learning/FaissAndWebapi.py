@@ -54,9 +54,3 @@ you have to anwser the question through {result}
         "question":question,
         "answer":lastresult
     }                                                  
-                        
-                         
-                         
-
-
-
