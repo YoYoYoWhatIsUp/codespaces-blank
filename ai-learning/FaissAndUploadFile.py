@@ -1,11 +1,12 @@
 #import all tools
-
+import os
 import faiss
 import numpy as np
 from zhipuai import ZhipuAI
 from sentence_transformers import SentenceTransformer
 from fastapi import FastAPI
 from fastapi import UploadFile,File
+from fastapi.responses import HTMLResponse
 
 #upload the file to faiss
 app=FastAPI()
@@ -43,7 +44,7 @@ def searchdata(question:str):
     the question is {question}
     you have to answer the question in using the {result} to answer the question
     """
-    llm=ZhipuAI(api_key="0f5f2de27971431c84c93f39e4f44c52.AM9Ml0wPmhFayaPb")
+    llm=ZhipuAI(api_key=os.getenv("ZHIPU_API_KEY"))
     response=llm.chat.completions.create(
         model="glm-4-air",
         messages=[
@@ -65,5 +66,49 @@ def searchdata(question:str):
 
 #return the answer from LLM
 
+@app.get("/ui", response_class=HTMLResponse)
+def ui():
+    return"""
+    <html>
+    <body>
 
+    <h2>AI知识库系统</h2>
 
+    <h3>上传文件</h3>
+    <input type="file" id="file">
+    <button onclick="upload()">上传</button>
+
+    <h3>提问</h3>
+    <input id="q" placeholder="输入问题">
+    <button onclick="ask()">提问</button>
+
+    <p id="a"></p>
+
+    <script>
+    async function upload(){
+        let fileInput = document.getElementById("file");
+        let formData = new FormData();
+        formData.append("file", fileInput.files[0]);
+
+        let res = await fetch("/upload", {
+            method: "POST",
+            body: formData
+        });
+
+        let data = await res.json();
+        alert("上传成功: " + data.message);
+    }
+
+    async function ask(){
+        let q = document.getElementById("q").value;
+
+        let res = await fetch(`/chat?question=${q}`);
+        let data = await res.json();
+
+        document.getElementById("a").innerText = data.answer;
+    }
+    </script>
+
+    </body>
+    </html>
+    """
