@@ -10,7 +10,8 @@ from fastapi.responses import HTMLResponse
 
 #upload the file to faiss
 app=FastAPI()
-
+index=None
+sentences=[]
 #get the data from the file that upload 
 @app.post("/upload")
 async def uploadfile(file:UploadFile=File(...)):
@@ -19,17 +20,19 @@ async def uploadfile(file:UploadFile=File(...)):
     text = content.decode("utf-8")
     global sentences,sentences_vector,index,model
     model=SentenceTransformer("all-MiniLM-L6-v2")
-    sentences=[line.strip() for line in text.split("\n") if line.strip()]
+    Newsentences=[line.strip() for line in text.split("\n") if line.strip()]
 
 #embedding and transform the data in using numpy
-    sentences_vector=np.array(model.encode(sentences)).astype("float32")
-    index=faiss.IndexFlatL2(384)
-
-#put the data into faiss
-    index.add(sentences_vector)
+    Newsentences_vector=np.array(model.encode(Newsentences)).astype("float32")
+    if index is None:
+        index=faiss.IndexFlatL2(384)
+    index.add(Newsentences_vector)
+    sentences.extend(Newsentences)
     return {"message": "文件上传并处理成功",
-            "条数": len(sentences),
-            "sentence":sentences
+            "总条数": len(sentences),
+            "增加的条数":len(Newsentences),
+            "sentence":sentences,
+            "Newsentence":Newsentences
             }
 
 
@@ -40,6 +43,10 @@ def searchdata(question:str):
     question_vector=np.array(model.encode([question])).astype("float32")
     distance,data=index.search(question_vector,1)
     result=sentences[data[0][0]]
+    if distance[0][0]>1 :
+        return {
+                "answer":"no related content"
+                }
     prompt=f"""
     the question is {question}
     you have to answer the question in using the {result} to answer the question
