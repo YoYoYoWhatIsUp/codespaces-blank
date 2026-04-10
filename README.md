@@ -42,7 +42,7 @@ uvicorn app.main:app --reload
 使用方法
 	1.	打开浏览器访问：
 
-http://localhost:8000/ui
+http://localhost:8000
 	2.	上传txt文件
 	3.	输入问题进行问答
 
