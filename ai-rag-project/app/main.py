@@ -2,9 +2,13 @@ from fastapi import FastAPI, UploadFile, File
 from app.rag import add_documents, search
 from zhipuai import ZhipuAI
 import os
-
+from fastapi.responses import FileResponse
 app = FastAPI()
 llm = ZhipuAI(api_key=os.getenv("ZHIPU_API_KEY"))
+
+@app.get("/")
+def home():
+    return FileResponse("static/index.html")
 
 @app.post("/upload")
 async def upload(file: UploadFile = File(...)):

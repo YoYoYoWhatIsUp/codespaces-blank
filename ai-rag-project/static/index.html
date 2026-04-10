@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h2>AI知识库系统</h2>
+
+<h3>上传文件</h3>
+<input type="file" id="file">
+<button onclick="upload()">上传</button>
+
+<h3>提问</h3>
+<input id="q" placeholder="输入问题">
+<button onclick="ask()">提问</button>
+
+<p id="a"></p>
+
+<script>
+async function upload(){
+    let fileInput = document.getElementById("file");
+    let formData = new FormData();
+    formData.append("file", fileInput.files[0]);
+
+    let res = await fetch("/upload", {
+        method: "POST",
+        body: formData
+    });
+
+    let data = await res.json();
+    alert("上传成功: " + data.message);
+}
+
+async function ask(){
+    let q = document.getElementById("q").value;
+
+    let res = await fetch(`/chat?question=${q}`);
+    let data = await res.json();
+
+    document.getElementById("a").innerText = data.answer;
+}
+</script>
+
+</body>
+</html>
